@@ -57,20 +57,93 @@ Access: `http://localhost:3000`
 
 ```
 
-
-## Authentication
-
-Session-based login with Spring Security (BCrypt passwords).
-
-| Role | How to sign in |
-|------|----------------|
-| **Register** | User tab → Register → username, contact, password (min 6 chars) |
-| **User login** | Username + password |
-| **Admin login** | `admin` / `admin123` |
-
-Start **both** backend (port 3001) and frontend (port 3000). The React app talks to the API via Vite proxy at `/api`.
-
-## Configuration
-Backend config: `java-backend/src/main/resources/application.properties`
-- `server.port=3001`
-- `spring.datasource.url=jdbc:h2:mem:testdb`
+Busbooking system/
+│
+├── frontend/
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── scripts/
+│   └── src/
+│       ├── api.js
+│       ├── App.jsx
+│       ├── main.jsx
+│       ├── store.js
+│       ├── styles.css
+│       ├── components/
+│       ├── contexts/
+│       ├── pages/
+│       ├── static/
+│       │   ├── css/
+│       │   │   ├── admin.css
+│       │   │   └── style.css
+│       │   └── js/
+│       │       ├── admin.js
+│       │       ├── portal.js
+│       │       └── script.js
+│       ├── templates/
+│       │   ├── admin.html
+│       │   ├── index.html
+│       │   ├── trip_details.html
+│       │   └── trip_history.html
+│       └── utils/
+│
+├── java-backend/
+│   ├── pom.xml
+│   └── src/
+│       └── main/
+│           ├── java/
+│           │   └── com/busbookingsystem/
+│           │       ├── BusbookingSystemApplication.java
+│           │       ├── config/
+│           │       ├── controller/
+│           │       │   ├── AdminController.java
+│           │       │   ├── AuthController.java
+│           │       │   ├── HomeController.java
+│           │       │   ├── TripController.java
+│           │       │   └── api/
+│           │       │       ├── AdminApiController.java
+│           │       │       ├── AuthApiController.java
+│           │       │       ├── DataApiController.java
+│           │       │       └── TripApiController.java
+│           │       ├── dto/
+│           │       ├── entity/
+│           │       │   ├── Driver.java
+│           │       │   ├── Role.java
+│           │       │   ├── Trip.java
+│           │       │   ├── User.java
+│           │       │   └── Vehicle.java
+│           │       ├── firebase/
+│           │       ├── repository/
+│           │       │   ├── DriverRepository.java
+│           │       │   ├── TripRepository.java
+│           │       │   ├── UserRepository.java
+│           │       │   └── VehicleRepository.java
+│           │       ├── security/
+│           │       │   ├── CustomUserDetailsService.java
+│           │       │   └── SecurityUtils.java
+│           │       └── service/
+│           │           ├── DriverService.java
+│           │           ├── TripService.java
+│           │           ├── UserService.java
+│           │           └── VehicleService.java
+│           └── resources/
+│               ├── application.properties
+│               ├── static/
+│               │   ├── assets/
+│               │   ├── css/
+│               │   └── js/
+│               └── templates/
+│
+├── scripts/
+│   ├── rename_project.ps1
+│   ├── run-backend.bat
+│   ├── run-backend.ps1
+│   ├── run-frontend.bat
+│   ├── run-frontend.ps1
+│   ├── run-fullstack.bat
+│   └── run-fullstack.ps1
+│
+├── pom.xml
+├── README.md
+└── Note
