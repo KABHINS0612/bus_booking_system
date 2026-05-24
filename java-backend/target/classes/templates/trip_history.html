@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip History - J^2 Vehicle Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>J^2 Vehicle Management System</h1>
+            <div class="user-info">
+                <span th:text="'Welcome, ' + ${#session.getAttribute('username')}"></span>
+                <a th:href="@{/logout}" class="logout-btn">Logout</a>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="trip-history-container">
+                <h2>Your Trip History</h2>
+                
+                <div class="nav-buttons">
+                    <a th:href="@{/trip_details}" class="btn back-btn">Book Another Trip</a>
+                </div>
+                
+                <div th:if="${trips != null && trips.size() > 0}">
+                    <div class="trips-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Trip ID</th>
+                                    <th>Vehicle</th>
+                                    <th>Driver</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Pickup Point</th>
+                                    <th>End Point</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="trip : ${trips}">
+                                    <td th:text="${trip.id}"></td>
+                                    <td th:text="${trip.vehicle.name}"></td>
+                                    <td th:text="${trip.driver.name}"></td>
+                                    <td th:text="${trip.startDate}"></td>
+                                    <td th:text="${trip.endDate}"></td>
+                                    <td th:text="${trip.pickupPoint}"></td>
+                                    <td th:text="${trip.endPoint}"></td>
+                                    <td th:text="${trip.status}"></td>
+                                    <td th:if="${trip.status != 'cancelled'}">
+                                        <form th:action="@{/cancel_trip/{id}(id=${trip.id})}" method="post" class="inline-form">
+                                            <button type="submit" class="btn cancel-btn" onclick="return confirm('Are you sure you want to cancel this trip?')">Cancel</button>
+                                        </form>
+                                    </td>
+                                    <td th:unless="${trip.status != 'cancelled'}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div th:if="${trips == null || trips.size() == 0}" class="no-trips">
+                    <p>You haven't booked any trips yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

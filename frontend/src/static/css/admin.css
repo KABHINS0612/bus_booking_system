@@ -1,0 +1,91 @@
+/* Dark-themed cohesive overrides for Admin Dashboard */
+
+.admin-tabs {
+    margin-bottom: 24px;
+}
+
+.tab-links {
+    list-style-type: none;
+    display: flex;
+    gap: 8px;
+    background: rgba(2, 6, 23, 0.35);
+    padding: 6px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: fit-content;
+}
+
+.tab-links li {
+    margin: 0;
+}
+
+.tab-link {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #94a3b8;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.tab-link.active {
+    color: #ffffff;
+    background: rgba(124, 92, 255, 0.25);
+    box-shadow: 0 4px 12px rgba(124, 92, 255, 0.15);
+    border: 1px solid rgba(124, 92, 255, 0.3);
+}
+
+.tab-link:hover:not(.active) {
+    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.add-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
+    color: #030712 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 16px rgba(46, 204, 113, 0.2) !important;
+    margin-top: 24px;
+}
+
+.add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(46, 204, 113, 0.4) !important;
+    filter: brightness(1.15);
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 16px rgba(231, 76, 60, 0.2) !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+}
+
+.delete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(231, 76, 60, 0.4) !important;
+    filter: brightness(1.1);
+}
+
+.inline-form {
+    display: inline;
+}

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - J^2 Vehicle Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>J^2 Vehicle Management System - Admin</h1>
+            <div class="admin-info" th:if="${dashboard}">
+                <a th:href="@{/admin/logout}" class="logout-btn">Logout</a>
+            </div>
+        </header>
+        
+        <div class="content">
+            <!-- Admin Login Form -->
+            <div th:if="!${dashboard}" class="admin-login-container">
+                <h2>Admin Login</h2>
+                <form action="/admin/login" method="post">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn login-btn">Login</button>
+                </form>
+                <div class="back-link">
+                    <a th:href="@{/}">Back to User Login</a>
+                </div>
+            </div>
+            
+            <!-- Admin Dashboard -->
+            <div th:if="${dashboard}" class="admin-dashboard">
+                <div class="admin-tabs">
+                    <ul class="tab-links">
+                        <li><a href="#bookings" class="tab-link active" onclick="openTab(event, 'bookings')">Bookings</a></li>
+                        <li><a href="#vehicles" class="tab-link" onclick="openTab(event, 'vehicles')">Vehicles</a></li>
+                        <li><a href="#drivers" class="tab-link" onclick="openTab(event, 'drivers')">Drivers</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Bookings Tab -->
+                <div id="bookings" class="tab-content active">
+                    <h2>All Bookings</h2>
+                    <div th:if="${trips != null && trips.size() > 0}">
+                        <div class="trips-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Trip ID</th>
+                                        <th>User</th>
+                                        <th>Contact</th>
+                                        <th>Vehicle</th>
+                                        <th>Driver</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Pickup Point</th>
+                                        <th>End Point</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="trip : ${trips}">
+                                        <td th:text="${trip.id}"></td>
+                                        <td th:text="${trip.user.username}"></td>
+                                        <td th:text="${trip.user.contact}"></td>
+                                        <td th:text="${trip.vehicle.name}"></td>
+                                        <td th:text="${trip.driver.name}"></td>
+                                        <td th:text="${trip.startDate}"></td>
+                                        <td th:text="${trip.endDate}"></td>
+                                        <td th:text="${trip.pickupPoint}"></td>
+                                        <td th:text="${trip.endPoint}"></td>
+                                        <td th:text="${trip.status}"></td>
+                                        <td th:if="${trip.status != 'cancelled'}">
+                                            <form th:action="@{/admin/cancel_trip/{id}(id=${trip.id})}" method="post" class="inline-form">
+                                                <button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure you want to cancel this trip?')">Cancel</button>
+                                            </form>
+                                        </td>
+                                        <td th:unless="${trip.status != 'cancelled'}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div th:if="${trips == null || trips.size() == 0}" class="no-trips">
+                        <p>No bookings found in the system.</p>
+                    </div>
+                </div>
+                
+                <!-- Vehicles Tab -->
+                <div id="vehicles" class="tab-content">
+                    <div class="add-section">
+                        <h2>Add New Vehicle</h2>
+                        <form action="/admin/add_vehicle" method="post">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="vehicle-name">Vehicle Name</label>
+                                    <input type="text" id="vehicle-name" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vehicle-model">Model</label>
+                                    <input type="text" id="vehicle-model" name="model" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="vehicle-capacity">Capacity</label>
+                                    <input type="number" id="vehicle-capacity" name="capacity" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn add-btn">Add Vehicle</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <h2>Vehicle List</h2>
+                    <div th:if="${vehicles != null && vehicles.size() > 0}">
+                        <div class="vehicles-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Model</th>
+                                        <th>Capacity</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="vehicle : ${vehicles}">
+                                        <td th:text="${vehicle.id}"></td>
+                                        <td th:text="${vehicle.name}"></td>
+                                        <td th:text="${vehicle.model}"></td>
+                                        <td th:text="${vehicle.capacity}"></td>
+                                        <td>
+                                            <form th:action="@{/admin/delete_vehicle/{id}(id=${vehicle.id})}" method="post" class="inline-form">
+                                                <button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this vehicle?')">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div th:if="${vehicles == null || vehicles.size() == 0}" class="no-vehicles">
+                        <p>No vehicles found in the system.</p>
+                    </div>
+                </div>
+                
+                <!-- Drivers Tab -->
+                <div id="drivers" class="tab-content">
+                    <div class="add-section">
+                        <h2>Add New Driver</h2>
+                        <form action="/admin/add_driver" method="post">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="driver-name">Driver Name</label>
+                                    <input type="text" id="driver-name" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="driver-experience">Experience (Years)</label>
+                                    <input type="number" id="driver-experience" name="experience" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn add-btn">Add Driver</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <h2>Driver List</h2>
+                    <div th:if="${drivers != null && drivers.size() > 0}">
+                        <div class="drivers-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Experience (Years)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="driver : ${drivers}">
+                                        <td th:text="${driver.id}"></td>
+                                        <td th:text="${driver.name}"></td>
+                                        <td th:text="${driver.experience}"></td>
+                                        <td>
+                                            <form th:action="@{/admin/delete_driver/{id}(id=${driver.id})}" method="post" class="inline-form">
+                                                <button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this driver?')">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div th:if="${drivers == null || drivers.size() == 0}" class="no-drivers">
+                        <p>No drivers found in the system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

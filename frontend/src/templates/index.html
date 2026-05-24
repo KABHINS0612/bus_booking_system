@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Booking System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body th:attr="data-guest-tab=${guestTab}">
+
+<div class="app-shell">
+    <div class="brand">
+        <div class="brand-logo" aria-label="Bus logo">🚍</div>
+        <div class="brand-title">Bus Booking System</div>
+        <span class="brand-url muted">http://localhost:3000</span>
+    </div>
+
+    <!-- ========== GUEST: User + Admin login on one page ========== -->
+    <div th:if="${view == 'guest'}" class="portal-section">
+        <div class="portal-tabs guest-tabs">
+            <button type="button" class="portal-tab active" data-guest-tab="user" onclick="showGuestTab('user')">User Login</button>
+            <button type="button" class="portal-tab" data-guest-tab="admin" onclick="showGuestTab('admin')">Admin Login</button>
+        </div>
+
+        <div id="guest-user" class="guest-panel active">
+            <div class="card login-card">
+                <h2>Welcome — Book a Trip</h2>
+                <p class="muted">Enter your username and contact number to start booking trips.</p>
+                <form action="/login" method="post">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input class="form-control" type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact">Contact Number</label>
+                        <input class="form-control" type="text" id="contact" name="contact" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Start</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="guest-admin" class="guest-panel">
+            <div class="card login-card">
+                <h2>Admin Login</h2>
+                <form action="/admin/login" method="post">
+                    <div class="form-group">
+                        <label for="admin-username">Username</label>
+                        <input class="form-control" type="text" id="admin-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <input class="form-control" type="password" id="admin-password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p class="muted hint">Default: admin / admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== USER: Book + History on same link ========== -->
+    <div th:if="${view == 'user'}" class="portal-section">
+        <div class="portal-header">
+            <span th:text="'Welcome, ' + ${username}"></span>
+            <a th:href="@{/logout}" class="btn btn-outline">Logout</a>
+        </div>
+
+        <div class="portal-tabs">
+            <a href="/?tab=book" class="portal-tab" th:classappend="${activeTab == 'book'} ? ' active' : ''">Book Trip</a>
+            <a href="/?tab=history" class="portal-tab" th:classappend="${activeTab == 'history'} ? ' active' : ''">Trip History</a>
+        </div>
+
+        <div th:if="${activeTab == 'book'}" class="card">
+            <h2>Book a New Trip</h2>
+            <form action="/book_trip" method="post">
+                <div class="form-group">
+                    <label for="vehicle">Select Vehicle</label>
+                    <select class="form-control" id="vehicle" name="vehicle" required>
+                        <option value="" disabled selected>Choose a vehicle</option>
+                        <option th:each="v : ${vehicles}" th:value="${v.id}"
+                                th:text="${v.name + ' - ' + v.model + ' (Capacity: ' + v.capacity + ')'}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="driver">Select Driver</label>
+                    <select class="form-control" id="driver" name="driver" required>
+                        <option value="" disabled selected>Choose a driver</option>
+                        <option th:each="d : ${drivers}" th:value="${d.id}"
+                                th:text="${d.name + ' (' + d.experience + ' years experience)'}"></option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input class="form-control" type="date" id="start_date" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date</label>
+                        <input class="form-control" type="date" id="end_date" name="end_date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pickup_point">Pickup Point</label>
+                    <input class="form-control" type="text" id="pickup_point" name="pickup_point" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_point">End Point</label>
+                    <input class="form-control" type="text" id="end_point" name="end_point" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Book Trip</button>
+            </form>
+        </div>
+
+        <div th:if="${activeTab == 'history'}" class="card">
+            <h2>Your Trip History</h2>
+            <div th:if="${trips != null && !trips.isEmpty()}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Vehicle</th><th>Driver</th><th>Start</th><th>End</th>
+                            <th>Pickup</th><th>Destination</th><th>Status</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="trip : ${trips}">
+                            <td th:text="${trip.id}"></td>
+                            <td th:text="${trip.vehicle.name}"></td>
+                            <td th:text="${trip.driver.name}"></td>
+                            <td th:text="${trip.startDate}"></td>
+                            <td th:text="${trip.endDate}"></td>
+                            <td th:text="${trip.pickupPoint}"></td>
+                            <td th:text="${trip.endPoint}"></td>
+                            <td th:text="${trip.status}"></td>
+                            <td th:if="${trip.status != 'cancelled'}">
+                                <form th:action="@{/cancel_trip/{id}(id=${trip.id})}" method="post" class="inline-form">
+                                    <button type="submit" class="btn btn-danger"
+                                            onclick="return confirm('Cancel this trip?')">Cancel</button>
+                                </form>
+                            </td>
+                            <td th:unless="${trip.status != 'cancelled'}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p th:if="${trips == null || trips.isEmpty()}" class="muted">No trips booked yet.</p>
+        </div>
+    </div>
+
+    <!-- ========== ADMIN: Full dashboard on same link ========== -->
+    <div th:if="${view == 'admin'}" class="portal-section admin-portal">
+        <div class="portal-header">
+            <span>Admin Dashboard</span>
+            <a th:href="@{/admin/logout}" class="btn btn-outline">Logout</a>
+        </div>
+
+        <div class="admin-tabs">
+            <ul class="tab-links">
+                <li><a href="#bookings" class="tab-link active" onclick="openTab(event, 'bookings')">Bookings</a></li>
+                <li><a href="#vehicles" class="tab-link" onclick="openTab(event, 'vehicles')">Vehicles</a></li>
+                <li><a href="#drivers" class="tab-link" onclick="openTab(event, 'drivers')">Drivers</a></li>
+            </ul>
+        </div>
+
+        <div id="bookings" class="tab-content active card">
+            <h2>All Bookings</h2>
+            <div th:if="${trips != null && !trips.isEmpty()}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>User</th><th>Contact</th><th>Vehicle</th><th>Driver</th>
+                            <th>Start</th><th>End</th><th>Pickup</th><th>Destination</th><th>Status</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="trip : ${trips}">
+                            <td th:text="${trip.id}"></td>
+                            <td th:text="${trip.user.username}"></td>
+                            <td th:text="${trip.user.contact}"></td>
+                            <td th:text="${trip.vehicle.name}"></td>
+                            <td th:text="${trip.driver.name}"></td>
+                            <td th:text="${trip.startDate}"></td>
+                            <td th:text="${trip.endDate}"></td>
+                            <td th:text="${trip.pickupPoint}"></td>
+                            <td th:text="${trip.endPoint}"></td>
+                            <td th:text="${trip.status}"></td>
+                            <td th:if="${trip.status != 'cancelled'}">
+                                <form th:action="@{/admin/cancel_trip/{id}(id=${trip.id})}" method="post" class="inline-form">
+                                    <button type="submit" class="btn btn-danger"
+                                            onclick="return confirm('Cancel this trip?')">Cancel</button>
+                                </form>
+                            </td>
+                            <td th:unless="${trip.status != 'cancelled'}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p th:if="${trips == null || trips.isEmpty()}" class="muted">No bookings found.</p>
+        </div>
+
+        <div id="vehicles" class="tab-content card">
+            <h2>Add Vehicle</h2>
+            <form action="/admin/add_vehicle" method="post" class="form-row">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Model</label>
+                    <input class="form-control" type="text" name="model" required>
+                </div>
+                <div class="form-group">
+                    <label>Capacity</label>
+                    <input class="form-control" type="number" name="capacity" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+            <h3>Vehicle List</h3>
+            <table th:if="${vehicles != null && !vehicles.isEmpty()}">
+                <thead><tr><th>ID</th><th>Name</th><th>Model</th><th>Capacity</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr th:each="vehicle : ${vehicles}">
+                        <td th:text="${vehicle.id}"></td>
+                        <td th:text="${vehicle.name}"></td>
+                        <td th:text="${vehicle.model}"></td>
+                        <td th:text="${vehicle.capacity}"></td>
+                        <td>
+                            <form th:action="@{/admin/delete_vehicle/{id}(id=${vehicle.id})}" method="post" class="inline-form">
+                                <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Delete this vehicle?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="drivers" class="tab-content card">
+            <h2>Add Driver</h2>
+            <form action="/admin/add_driver" method="post" class="form-row">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Experience (years)</label>
+                    <input class="form-control" type="number" name="experience" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+            <h3>Driver List</h3>
+            <table th:if="${drivers != null && !drivers.isEmpty()}">
+                <thead><tr><th>ID</th><th>Name</th><th>Experience</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr th:each="driver : ${drivers}">
+                        <td th:text="${driver.id}"></td>
+                        <td th:text="${driver.name}"></td>
+                        <td th:text="${driver.experience}"></td>
+                        <td>
+                            <form th:action="@{/admin/delete_driver/{id}(id=${driver.id})}" method="post" class="inline-form">
+                                <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Delete this driver?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/portal.js}"></script>
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>
