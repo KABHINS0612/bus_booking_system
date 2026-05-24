@@ -1,5 +1,30 @@
 # Bus Booking System
 
+A full-stack web application for managing bus ticket bookings, built with Java Spring Boot (backend) and React + Vite (frontend).
+
+## Overview
+
+This project provides a complete solution for bus ticket booking and management, supporting both user and admin roles. Users can register, log in, book tickets, and view their trip history. Admins can manage trips, vehicles, drivers, and view all bookings.
+
+### Architecture
+
+- **Backend:** Java Spring Boot REST API, Spring Security for authentication, JPA for data persistence, Thymeleaf for server-side templates (admin panel).
+- **Frontend:** React (with Vite) for a modern, responsive user interface.
+- **Database:** H2 in-memory database for development (can be switched to MySQL or others).
+- **Authentication:** Session-based login with BCrypt password hashing.
+
+## Features
+
+- User registration and login
+- Admin and user roles with different access levels
+- Book, view, and cancel bus tickets
+- View trip details and booking history
+- Admin dashboard for managing trips, vehicles, drivers, and users
+- Secure authentication and session management
+- Modern UI with React and Vite
+
+# Bus Booking System
+
 Full-stack Java Spring Boot bus booking management application.
 
 ## Quick Start
